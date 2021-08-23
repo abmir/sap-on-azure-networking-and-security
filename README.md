@@ -1,30 +1,26 @@
----
-subtitle: 'Authors: Abbas Ali Mir, Daniel Mauser and Madhuri Kaniganti'
-title: SAP on Azure Network connectivity and Security 
----
+# SAP on Azure Network connectivity and Security 
 
 **In this article**
 
-[Abstract](#Abstract)
+[Abstract](#abstract)
 
-[SAP on Azure VMs](#SAPonAzureVMs)
+[SAP on Azure VMs](#sap-on-azure-vms)
 
-[Customer’s Networking and Security Requirements](#CustomersNetworkingandSecurityRequirements)
+[Customer’s Networking and Security Requirements](#customer-sap-landscape-in-azure)
 
-[Customer SAP Landscape in Azure](#CustomerSAPLandscapeinAzure)
+[Customer SAP Landscape in Azure](#customer-sap-landscape-in-azure)
 
-[Customer Environment](#CustomerEnvironment)
+[Customer Environment](#customer-environment)
 
-[Proposed Architecture Solution](#ProposedArchitectureSolution)
+[Proposed Architecture Solution](#proposed-architecture-solution)
 
-[SAP on Azure – VMs and HLI (Hana Large Instance)](#SAPonAzureVMsandHLIHanaLargeInstance)
+[SAP on Azure – VMs and HLI (Hana Large Instance)](#sap-on-azure--vms-and-hli-hana-large-instance)
 
-[Hana Large Instance (HLI) Introduction](#HanaLargeInstanceHLIIntroduction)
+[Hana Large Instance (HLI) Introduction](#hana-large-instance-hli-introduction)
 
-[ExpressRoute FastPath Introduction](#ExpressRouteFastPathIntroduction)
+[ExpressRoute FastPath Introduction](#expressroute-fastpath-introduction)
 
-[HLI Integration with VNETs – Enabling ER FastPath in Hub VNET](#HLIIntegrationwithVNETsEnablingERFastPathinHubVNET)
-
+[HLI Integration with VNETs – Enabling ER FastPath in Hub VNET](#hli-integration-with-vnets--enabling-er-fastpath-in-hub-vnet)
 
 ## Abstract
 
