@@ -132,17 +132,17 @@ Hana Database and DR Hana Database running on the same Hana VM.
 Mapping Customer requirements to Network connectivity & Security defined
 in Fig 1-b
 
-  \#   Customer Requirements                                                                                                             Solution / Communication Flow
-  ---- --------------------------------------------------------------------------------------------------------------------------------- ----------------------------------------------------------------------------------------------
-  1.   Any communication between SAP on Azure (SAP VNETs) and Internet is routed thru Firewall                                           SAP VNETs &lt;&gt; Hub VNET FW &lt;&gt; Internet
-  2    Any communication between SAP on Azure (SAP VNETs) and On-Premises DC’s is routed thru Firewall.                                  SAP VNETs &lt;&gt; Hub VNET FW &lt;&gt; ER Connection &lt;&gt; On-Premises DC’s
-  3    Cross-Region Hana System Replication via Global VNET Peering                                                                      SAP Prod VNET (SCUS) &lt;&gt; SAP QA VNET (EUS)
-  4    Any Communication between SAP VNETs (eg: SAP Transports, Data loads) in same region or cross-region is routed through Firewall.   SAP VNET (SCUS) &lt;&gt; Hub VNET (SCUS) &lt;&gt; Hub VNET (EUS) &lt;&gt; SAP VNET (EUS)
-  5    Non-SAP VNET (SCUS) to SAP VNET (SCUS) - (In-Region)                                                                              Non-SAP VNET (SCUS) &lt;&gt; Hub VNET (SCUS) &lt;&gt; SAP VNET (SCUS)
-  6    Non-SAP VNET (SCUS) to SAP VNET (EUS) - (Cross-Region)                                                                            Non-SAP VNET (SCUS) &lt;&gt; Hub VNET (SCUS) &lt;&gt; Hub VNET (EUS) &lt;&gt; SAP VNET (EUS)
+|#   |  Customer Requirements |   Solution / Communication Flow |
+|---|---|---|
+| 1  | Any communication between SAP on Azure (SAP VNETs) and Internet is routed thru Firewall  | SAP VNETs <> Hub VNET FW <> Internet  |
+| 2  | Any communication between SAP on Azure (SAP VNETs) and On-Premises DC’s is routed thru Firewall.  | SAP VNETs <> Hub VNET FW <> ER Connection <> On-Premises DC’s  |
+| 3  | Cross-Region Hana System Replication via Global VNET Peering  | SAP Prod VNET (SCUS) <> SAP QA VNET (EUS) |
+| 4  | Any Communication between SAP VNETs (eg: SAP Transports, Data loads) in same region or cross-region is routed through Firewall.  | SAP VNET (SCUS) <> Hub VNET (SCUS) <> Hub VNET (EUS) <> SAP VNET (EUS)  |
+| 5  | Non-SAP VNET (SCUS) to SAP VNET (SCUS) - (In-Region) | Non-SAP VNET (SCUS) <> Hub VNET (SCUS) <> SAP VNET (SCUS) |
+| 6  | Non-SAP VNET (SCUS) to SAP VNET (EUS) - (Cross-Region) | Non-SAP VNET (SCUS) <> Hub VNET (SCUS) <> Hub VNET (EUS) <> SAP VNET (EUS)  |
 
-**\
-**
+
+
 
 #### Fig 1-c – defines the Virtual Network Subnets, including placement of Firewalls 
 
@@ -190,29 +190,13 @@ reached for further guidance.
 
 **Route Tables Description and Function**
 
-  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  \#   Route Table (Color)                                                                    Applies to VNET/Subnets                            Purpose / Function
-  ---- -------------------------------------------------------------------------------------- -------------------------------------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  1    Blue                                                                                   SAP Dev VNET (web subnet, app subnet, db subnet)   Contains UDR’s that ensure all traffic originating (or Return Path) from SAP VNETs and destined to go to either Internet or On-Premises or to any other SAP or Non-SAP VNETs (in-region or cross-region), are being routed thru Hub VNET Firewall
-                                                                                                                                                 
-       ![](media/image5.png){width="0.30552055993000876in" height="0.30637029746281713in"}    SAP QA, Prod VNETs (db subnet only)                
-
-  2    Orange                                                                                 SAP QA & Prod VNETs (web subnet, app subnet)       It’s performing same function as Blue Route Table, with additional more specific UDR’s added to account for HSR Replication.
-                                                                                                                                                 
-       ![](media/image7.png){width="0.30552055993000876in" height="0.30637029746281713in"}                                                       In essence, it ensures non-db traffic between SAP Prod VNET and QA VNETs is not traversing the direct Global VNET Peering connection setup solely for HSR communication., and instead going thru each Region Hub VNET Firewalls.
-
-  3    Green                                                                                  Hub VNET (Firewall-Subnet-EW)                      This ensures any East West Traffic destined to go to Cross-Region Azure SAP VNets is routed to other Region Hub VNET Firewall via Global VNET Peering path, instead of taking the ExpressRoute connectivity.
-                                                                                                                                                 
-       ![](media/image9.png){width="0.30552055993000876in" height="0.30637029746281713in"}                                                       It also ensures any East West Traffic destined to go to Same-Region Azure SAP VNets is routed properly.
-
-  4    Yellow                                                                                 Hub VNET (Gateway Subnet)                          This ensures any communication originating (or Return Path) from On-Premises and destined to go to SAP VNETs is routed thru the Hub VNET Firewall.
-                                                                                                                                                 
-       ![](media/image11.png){width="0.30552055993000876in" height="0.30637029746281713in"}                                                      
-
-  5    Grey                                                                                   Non-SAP VNETs Subnets                              This ensures any communication originating (or Return Path) in non-SAP VNets and destined to go to SAP VNets is routed thru the Hub VNET Firewall.
-                                                                                                                                                 
-       ![](media/image13.png){width="0.30552165354330707in" height="0.30637029746281713in"}                                                      
-  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+|  # | Route Table (Color)  | Applies to VNET/Subnets  | Purpose / Function  |
+|---|---|---|---|
+| 1 | ![](/media/blue.png) Blue | SAP Dev VNET (web subnet, app subnet, db subnet) / SAP QA, Prod VNETs (db subnet only)  | Contains UDR’s that ensure all traffic originating (or Return Path) from SAP VNETs and destined to go to either Internet or On-Premises or to any other SAP or Non-SAP VNETs (in-region or cross-region), are being routed thru Hub VNET Firewall |
+| 2 | ![](/media/orange.png) Orange | SAP QA & Prod VNETs (web subnet, app subnet) | It’s performing same function as Blue Route Table, with additional more specific UDR’s added to account for HSR Replication. In essence, it ensures non-db traffic between SAP Prod VNET and QA VNETs is not traversing the direct Global VNET Peering connection setup solely for HSR communication., and instead going thru each Region Hub VNET Firewalls. |
+| 3  | ![](/media/green.png) Green | Hub VNET (Firewall-Subnet-EW) | This ensures any East West Traffic destined to go to Cross-Region Azure SAP VNets is routed to other Region Hub VNET Firewall via Global VNET Peering path, instead of taking the ExpressRoute connectivity. It also ensures any East West Traffic destined to go to Same-Region Azure SAP VNets is routed properly. |
+| 4  | ![](/media/yellow.png) Yellow  | Hub VNET (Gateway Subnet) | This ensures any communication originating (or Return Path) from On-Premises and destined to go to SAP VNETs is routed thru the Hub VNET Firewall. |
+| 5  | ![](/media/grey.png) Grey | Non-SAP VNETs Subnets | This ensures any communication originating (or Return Path) in non-SAP VNets and destined to go to SAP VNets is routed thru the Hub VNET Firewall. |
 
 ## SAP on Azure – VMs and HLI (Hana Large Instance)
 
@@ -264,13 +248,13 @@ and a key capability that is enabling the above Architecture.
 
 Mapping HLI use-case scenarios to solution in Fig 2-a
 
-  \#   HLI use-case connectivity Scenarios                                 Architecture Solution
-  ---- ------------------------------------------------------------------- ----------------------------------
-  1    SAP App Servers need to connect to HLI over ExpressRoute FastPath   VNET Peering + ER Connection \#2
-  2    Connectivity between On-premises and SAP VNETs                      VNET Peering + ER Connection \#1
-  3    Non-SAP VNETs to HLI connectivity                                   VNET Peering + ER Connection \#2
-  4    On-premises to HLI connectivity                                     ER Global Reach Connection
-  5    Internet (SCP…) to HLI connectivity                                 Internet + ER Connection \#2
+| #  | HLI use-case connectivity Scenarios  | Architecture Solution |
+|---|---|---|
+| 1 | SAP App Servers need to connect to HLI over ExpressRoute FastPath | VNET Peering + ER Connection #2 |
+| 2 | Connectivity between On-premises and SAP VNETs | VNET Peering + ER Connection #1 |
+| 3 | Non-SAP VNETs to HLI connectivity | VNET Peering + ER Connection #2 |
+| 4 | On-premises to HLI connectivity | ER Global Reach Connection |
+| 5 | Internet (SCP…) to HLI connectivity | Internet + ER Connection #2 |
 
 Note: Key Considerations
 
@@ -316,23 +300,19 @@ HLI ExpressRoute Circuits.
 
 Mapping HLI use-case scenarios to solution in Fig 2-b
 
-  \#   HLI use-case connectivity Scenarios                                 Architecture Solution
-  ---- ------------------------------------------------------------------- -----------------------------------------
-  1    SAP App Servers need to connect to HLI over ExpressRoute FastPath   VNET Peering + ER Connection \#2 or \#3
-  2    Connectivity between On-premises and SAP VNETs                      VNET Peering + ER Connection \#1
-  3    Non-SAP VNETs to HLI connectivity                                   VNET Peering + ER Connection \#2 or \#3
-  4    On-premises to HLI connectivity                                     ER Global Reach Connection \#1 and \#2
-  5    Internet (SCP…) to HLI connectivity                                 Internet + ER Connection \#2 or \#3
+| # | HLI use-case connectivity Scenarios  | Architecture Solution |
+|---|---|---|
+| 1 | SAP App Servers need to connect to HLI over ExpressRoute FastPath  | VNET Peering + ER Connection #2 or #3 |
+| 2 | Connectivity between On-premises and SAP VNETs | VNET Peering + ER Connection #1 |
+| 3 | Non-SAP VNETs to HLI connectivity | VNET Peering + ER Connection #2 or #3 |
+| 4 | On-premises to HLI connectivity | ER Global Reach Connection #1 and #2 |
+| 5 | Internet (SCP…) to HLI connectivity | Internet + ER Connection #2 or #3 |
 
-HLI Integration with VNETs – Enabling ER FastPath in SAP VNET 
---------------------------------------------------------------
+### HLI Integration with VNETs – Enabling ER FastPath in SAP VNET 
 
-#### 
+#### Fig 3-a – HLI & VNET Integration – ER FP in SAP VNET, Non-SAP to HLI via Hub VNET
 
-### Fig 3-a – HLI & VNET Integration – ER FP in SAP VNET, Non-SAP to HLI via Hub VNET
-
-![HLI & VNET Integration – ER FP in SAP VNET, Non-SAP to HLI via Hub VNET](/media/fig3a.png){width="6.5in"
-height="3.292361111111111in"}
+![HLI & VNET Integration – ER FP in SAP VNET, Non-SAP to HLI via Hub VNET](/media/fig3a.png)
 
 The above Solution will be useful for those Customers that are not
 comfortable with enabling ER Fast Path for Hub VNET ExpressRoute
@@ -354,13 +334,13 @@ Firewall NVA’s, as otherwise direct connectivity will be possible.
 
 Mapping HLI use-case scenarios to solution in Fig 3-a
 
-  HLI Use-case   HLI Connectivity Scenarios                                          Architecture Solution
-  -------------- ------------------------------------------------------------------- -----------------------------------
-  1              SAP App Servers need to connect to HLI over ExpressRoute FastPath   VNET Peering + ER Connection \# 2
-  2              Connectivity between On-premises and SAP VNETs                      VNET Peering + ER Connection \# 3
-  3              Non-SAP VNETs to HLI connectivity                                   VNET Peering + ER Connection \# 4
-  4              On-premises to HLI connectivity                                     ER Global Reach Connection
-  5              Internet (SCP…) to HLI connectivity                                 Internet + ER Connection \# 4
+| #  | HLI Connectivity Scenarios | Architecture Solution |
+|---|---|---|
+| 1 | SAP App Servers need to connect to HLI over ExpressRoute FastPath | VNET Peering + ER Connection # 2 |
+| 2 | Connectivity between On-premises and SAP VNETs | VNET Peering + ER Connection # 3 |
+| 3 | Connectivity between On-premises and SAP VNETs | VNET Peering + ER Connection # 4 |
+| 4 | On-premises to HLI connectivity  | ER Global Reach Connection |
+| 5 | Internet (SCP…) to HLI connectivity | Internet + ER Connection # 4 |
 
 ### Fig 3-b – HLI & VNET Integration – ER FP in SAP VNET, Non-SAP to HLI via Hub & SAP VNETs FW 
 
@@ -375,10 +355,10 @@ Firewalls, in addition to setting up many UDR’s.
 
 Mapping HLI use-case scenarios to solution in Fig 3-b
 
-  HLI Use-case   HLI Connectivity Scenarios                                          Architecture Solution
-  -------------- ------------------------------------------------------------------- --------------------------------------------------------------------------
-  1              SAP App Servers need to connect to HLI over ExpressRoute FastPath   VNET Peering + ER Connection \#2
-  2              Connectivity between On-premises and SAP VNETs                      VNET Peering + ER Connection \#3
-  3              Non-SAP VNETs to HLI connectivity                                   VNET Peering + Hub VNET Firewall + SAP VNET Firewall + ER Connection \#2
-  4              On-premises to HLI connectivity                                     ER Global Reach Connection
-  5              Internet (SCP…) to HLI connectivity                                 Internet + Hub VNET Firewall + SAP VNET Firewall + ER Connection \#2
+| # | HLI Connectivity Scenarios | Architecture Solution |
+|---|---|---|
+| 1 | SAP App Servers need to connect to HLI over ExpressRoute FastPath | VNET Peering + ER Connection #2 |
+| 2 | Connectivity between On-premises and SAP VNETs | VNET Peering + ER Connection #3 |
+| 3 | Non-SAP VNETs to HLI connectivity | VNET Peering + Hub VNET Firewall + SAP VNET Firewall + ER Connection #2 |
+| 4 | On-premises to HLI connectivity | ER Global Reach Connection  |
+| 5 | Internet (SCP…) to HLI connectivity | Internet + Hub VNET Firewall + SAP VNET Firewall + ER Connection #2 |
