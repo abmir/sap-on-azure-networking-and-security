@@ -1,6 +1,6 @@
 # SAP on Azure Network connectivity and Security 
 
-**Authors: Abbas Ali Mir, Daniel Mauser and Madhuri Kaniganti**
+**Authors:  Abbas Ali Mir, Daniel Mauser and Madhuri Kaniganti**
 
 **In this article**
 
