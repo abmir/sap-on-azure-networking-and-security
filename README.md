@@ -99,8 +99,8 @@ Hana Database and DR Hana Database running on the same Hana VM.
     workloads.
 3. An SAP Mini-Hub VNET is also created to provide for SAP Shared
     Services to all SAP Deployments in each Azure Region.
-4. Customer has two Datacenters in Dallas and Ashburn respectively,
-    that are connected thru Dallas and Ashburn ExpressRoute Circuits to
+4. Customer has two Datacenters, one in Texas and other in Virginia respectively,
+    that are connected thru Dallas and Washington D.C. ExpressRoute Circuits to
     Azure VNETs (via Hub VNET ExpressRoute Gateway) in each Region.
 
 ### Proposed Architecture Solution
